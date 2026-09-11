@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bibliografía</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bungee&family=Michroma&display=swap');
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #000;
+            font-family: 'Michroma', sans-serif;
+        }
+
+        #escenario-bibliografia {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* TÍTULO PRINCIPAL (Bungee) */
+        #titulo-bibliografia {
+            color: #fff;
+            font-family: 'Bungee', cursive;
+            font-size: 42px;
+            font-weight: bold;
+            margin-bottom: 40px;
+            letter-spacing: 2px;
+            text-shadow: 3px 3px 0 #000;
+            z-index: 10;
+        }
+
+        /* LISTA DE LINKS (Michroma) */
+        #lista-bibliografia {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            z-index: 10;
+        }
+
+        #lista-bibliografia li {
+            color: #fff;
+            font-family: 'Michroma', sans-serif;
+            font-size: 24px;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+        }
+
+        #lista-bibliografia li::before {
+            content: "•";
+            margin-right: 12px;
+            color: #fff;
+        }
+
+        #lista-bibliografia a {
+            color: #fff;
+            font-family: 'Michroma', sans-serif;
+            text-decoration: underline;
+            margin-left: 8px;
+            transition: color 0.2s ease;
+        }
+
+        #lista-bibliografia a:hover {
+            color: #00ffcc;
+        }
+
+        /* SUELO DE MARIO */
+        #suelo-bibliografia {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 50px;
+            background-image: url('https://i.pinimg.com/736x/2f/87/23/2f87236e7dfb88c1a8561200cdddfe6e.jpg');
+            background-size: contain;
+            background-repeat: repeat-x;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <div id="escenario-bibliografia">
+        <h1 id="titulo-bibliografia">BIBLIOGRAFIA</h1>
+
+        <!-- La lista se renderiza dinámicamente desde JS -->
+        <ul id="lista-bibliografia"></ul>
+
+        <div id="suelo-bibliografia"></div>
+    </div>
+
+    <script src="bibliografia.js"></script>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nivel 3 - IA en FIFA</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bungee&family=Michroma&display=swap');
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #000;
+            font-family: 'Michroma', sans-serif;
+        }
+        #juego-nivel4 {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+            background: #000;
+        }
+        #escenario-fifa {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 2200px;
+            height: 100vh;
+            min-height: 500px;
+            background: #000;
+            transform: translateX(0);
+            z-index: 1;
+        }
+        #fondo-fifa {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 2200px;
+            height: 100%;
+            background: #000;
+            z-index: 0;
+        }
+        #tubo-entrada-fifa {
+            position: absolute;
+            left: 100px;
+            bottom: 50px;
+            width: 90px;
+            height: 180px;
+            background-image: url('https://cdn.pixabay.com/photo/2013/07/12/13/52/super-mario-brothers-147465_1280.png');
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            z-index: 6;
+        }
+        /* ELEMENTOS NUEVOS: BANDERA Y CASTILLO */
+        /* BANDERA Y CASTILLO INLINE (SVG puro, sin dependencias externas) */
+        #bandera-fifa {
+            position: absolute;
+            left: 1750px;
+            bottom: 50px;
+            width: 40px;
+            height: 350px;
+            background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 350'><rect x='18' y='0' width='4' height='350' fill='%23ffffff'/><circle cx='20' cy='10' r='8' fill='%23ffd700'/><polygon points='18,20 18,70 0,45' fill='%2300ff00'/></svg>") no-repeat center bottom / contain;
+            z-index: 4;
+        }
+
+        #castillo-fifa {
+            position: absolute;
+            left: 1880px;
+            bottom: 50px;
+            width: 220px;
+            height: 220px;
+            background-image: url('img/castillo.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center bottom;
+            z-index: 6; /* Mantiene a Mario tapado por detrás cuando entra a la puerta */
+        }
+        #mario {
+            width: 48px;
+            height: 60px;
+            position: absolute;
+            z-index: 5;
+            transition: opacity 0.3s ease;
+        }
+        #titulo-fifa {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 900px;
+            color: white;
+            text-align: center;
+            font-family: 'Bungee', cursive;
+            font-size: 42px;
+            font-weight: bold;
+            text-shadow: 3px 3px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000;
+            z-index: 20;
+        }
+        #subtitulo-fifa {
+            position: absolute;
+            top: 110px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 900px;
+            color: white;
+            text-align: center;
+            font-family: 'Michroma', sans-serif;
+            font-size: 22px;
+            text-shadow: 2px 2px 3px #000;
+            z-index: 20;
+        }
+        #suelo-fifa {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 2200px;
+            height: 50px;
+            background-image: url('https://i.pinimg.com/736x/2f/87/23/2f87236e7dfb88c1a8561200cdddfe6e.jpg');
+            background-size: contain;
+            background-repeat: repeat-x;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <div id="juego-nivel4">
+        <div id="escenario-fifa">
+            <div id="fondo-fifa"></div>
+
+            <div id="tubo-entrada-fifa" class="cañeria-entrada"></div>
+            
+            <div id="bandera-fifa"></div>
+            <div id="castillo-fifa"></div>
+
+            <div id="mario" class="mario-idle"></div>
+            <div id="suelo-fifa"></div>
+        </div>
+    </div>
+    <script src="script5.js"></script>
+</body>
+</html>

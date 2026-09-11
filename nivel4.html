@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nivel 3 - IA en FIFA</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bungee&family=Michroma&display=swap');
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #000;
+            font-family: 'Michroma', sans-serif;
+        }
+        #juego-nivel4 {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+            background: #000;
+        }
+        #escenario-fifa {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 2200px;
+            height: 100vh;
+            min-height: 500px;
+            background: #000;
+            transform: translateX(0);
+            z-index: 1;
+        }
+        #fondo-fifa {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 2200px;
+            height: 100%;
+            background: #000;
+            z-index: 0;
+        }
+        #tubo-entrada-fifa {
+            position: absolute;
+            left: 100px;
+            bottom: 50px;
+            width: 90px;
+            height: 180px;
+            background-image: url('https://cdn.pixabay.com/photo/2013/07/12/13/52/super-mario-brothers-147465_1280.png');
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            z-index: 6;
+        }
+        #tubo-salida-fifa {
+            position: absolute;
+            left: 2020px;
+            bottom: 50px;
+            width: 80px;
+            height: 110px;
+            background-image: url('https://cdn.pixabay.com/photo/2013/07/12/13/52/super-mario-brothers-147465_1280.png');
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            z-index: 6;
+        }
+        #mario {
+            width: 48px;
+            height: 60px;
+            position: absolute;
+            z-index: 5;
+        }
+        #titulo-fifa {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 900px;
+            color: white;
+            text-align: center;
+            font-family: 'Bungee', cursive;
+            font-size: 42px;
+            font-weight: bold;
+            text-shadow: 3px 3px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000;
+            z-index: 20;
+        }
+        #subtitulo-fifa {
+            position: absolute;
+            top: 110px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 900px;
+            color: white;
+            text-align: center;
+            font-family: 'Michroma', sans-serif;
+            font-size: 22px;
+            text-shadow: 2px 2px 3px #000;
+            z-index: 20;
+        }
+        .pow {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            z-index: 8;
+            transition: transform 0.08s ease, bottom 0.08s ease;
+        }
+        #pow-rojo {
+            left: 750px;
+            bottom: 230px;
+            background-image: url('img/powr.png');
+        }
+        #pow-azul {
+            left: 1450px;
+            bottom: 230px;
+            background-image: url('img/powb.png');
+        }
+        .pow-golpeado {
+            transform: translateY(12px) scale(0.95);
+        }
+        .info-fifa {
+            position: absolute;
+            color: white;
+            text-align: center;
+            font-family: 'Michroma', sans-serif;
+            background: rgba(0, 0, 0, 0.92);
+            border: 3px solid white;
+            border-radius: 10px;
+            padding: 20px;
+            box-sizing: border-box;
+            z-index: 30;
+            text-shadow: 2px 2px 3px #000;
+        }
+        .info-oculta {
+            display: none !important;
+        }
+        /* CUADROS DE INFO PURAMENTE CON IMÁGENES ESTÁTICAS */
+        #info-roja {
+            left: 550px;
+            top: 180px;
+            width: 480px;
+        }
+        #info-roja p {
+            margin: 0 0 18px 0;
+            font-size: 22px;
+            line-height: 1.35;
+        }
+        #imagen-ea {
+            display: block;
+            width: 1200px;
+            max-width: 400px;
+            height: auto;
+            margin: 0 auto;
+        }
+        #info-azul {
+            left: 1250px;
+            top: 180px;
+            width: 480px;
+        }
+        #info-azul p {
+            margin: 0 0 18px 0;
+            font-size: 22px;
+            line-height: 1.35;
+        }
+        #imagen-creatures {
+            display: block;
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            margin: 0 auto;
+        }
+        #suelo-fifa {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 2200px;
+            height: 50px;
+            background-image: url('https://i.pinimg.com/736x/2f/87/23/2f87236e7dfb88c1a8561200cdddfe6e.jpg');
+            background-size: contain;
+            background-repeat: repeat-x;
+            z-index: 10;
+        }
+        #mario.saliendo-tubo {
+            transition: bottom 0.8s ease-out !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="juego-nivel4">
+        <div id="escenario-fifa">
+            <div id="fondo-fifa"></div>
+
+            <div id="tubo-entrada-fifa" class="cañeria-entrada"></div>
+            <div id="tubo-salida-fifa" class="cañeria-entrada"></div>
+
+            <div id="titulo-fifa">INTELIGENCIA ARTIFICIAL: FIFA</div>
+            <div id="subtitulo-fifa">Usa frames captados de partidos reales</div>
+
+            <!-- POW ROJO Y SU IMAGEN ESTÁTICA -->
+            <div id="pow-rojo" class="pow"></div>
+            <div id="info-roja" class="info-fifa info-oculta">
+                <p>
+                    Redes neuronales interactúan<br>
+                    con un refuerzo bioquímico<br>
+                    para accionar.
+                </p>
+                <img id="imagen-ea" src="img/redesneuron.png" alt="Redes neuronales">
+            </div>
+
+            <!-- POW AZUL Y SU IMAGEN ESTÁTICA -->
+            <div id="pow-azul" class="pow"></div>
+            <div id="info-azul" class="info-fifa info-oculta">
+                <p>
+                    Las decisiones cambian según<br>
+                    su estado interno y lo que ha aprendido<br>
+                    a lo largo de su vida.
+                </p>
+                <img id="imagen-creatures" src="img/creatures.png" alt="Creatures IA">
+            </div>
+
+            <div id="mario" class="mario-idle"></div>
+            <div id="suelo-fifa"></div>
+        </div>
+    </div>
+    <script src="script4.js"></script>
+</body>
+</html>
