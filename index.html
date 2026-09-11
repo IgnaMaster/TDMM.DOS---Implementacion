@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Mario ML - Nivel 1</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div id="juego">
+        <!-- Indicador de Teclas (WASD) -->
+        <div id="instrucciones-teclas">
+            <div class="tecla tecla-w">W</div>
+            <div class="fila-teclas">
+                <div class="tecla">A</div>
+                <div class="tecla">S</div>
+                <div class="tecla">D</div>
+            </div>
+        </div>
+
+        <!-- Modal Machine Learning -->
+        <div id="modal-ml" class="oculto">
+            <div class="modal-contenido">
+                <h2>¿QUÉ ES EL MACHINE LEARNING?</h2>
+                <p>Mario te la hace fácil</p>
+            </div>
+        </div>
+
+        <div id="mundo">
+            <!-- Bloques centrados -->
+            <div class="bloque obstaculo" style="left: 800px; bottom: 190px; width: 50px; height: 50px;"></div>
+            <div class="bloque obstaculo" style="left: 850px; bottom: 190px; width: 50px; height: 50px;"></div>
+            <div class="bloque-amarillo obstaculo" style="left: 900px; bottom: 190px; width: 50px; height: 50px;" id="bloque-mensaje-ml"></div>
+            <div class="bloque obstaculo" style="left: 950px; bottom: 190px; width: 50px; height: 50px;"></div>
+            <div class="bloque obstaculo" style="left: 1000px; bottom: 190px; width: 50px; height: 50px;"></div>
+
+            <!-- Tubería de entrada al final de la pantalla -->
+            <div id="tubo-entrada" class="cañeria-entrada obstaculo" style="left: 1650px; bottom: 50px; width: 80px; height: 100px;"></div>
+
+            <!-- Personaje Mario con clase idle inicial -->
+            <div id="mario" class="mario-idle"></div>
+        </div>
+
+        <div id="piso"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

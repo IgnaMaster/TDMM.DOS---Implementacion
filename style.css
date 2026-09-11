@@ -1,0 +1,191 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #000;
+    font-family: 'Geistl Pixel', monospace;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+#juego {
+    width: 100vw;
+    max-width: 1920px;
+    height: 100vh;
+    max-height: 1080px;
+    position: relative;
+    overflow: hidden;
+    background-image: url('imagenes/fondo.jpeg');
+    background-size: cover;
+    background-position: center;
+}
+
+/* Indicador Teclas WASD */
+#instrucciones-teclas {
+    position: absolute;
+    top: 220px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    z-index: 20;
+    transition: opacity 0.4s ease;
+}
+
+.fila-teclas {
+    display: flex;
+    gap: 8px;
+}
+
+.tecla {
+    width: 50px;
+    height: 50px;
+    background: #ffffff;
+    color: #000000;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    font-weight: bold;
+    box-shadow: 0px 4px 0px #aaa;
+}
+
+.oculto {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    display: none !important;
+}
+
+/* Modal ML */
+#modal-ml {
+    position: absolute;
+    top: 120px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    text-align: center;
+}
+
+.modal-contenido h2 {
+    color: #ffffff;
+    margin: 0 0 8px 0;
+    font-size: 36px;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+}
+
+.modal-contenido p {
+    color: #cccccc;
+    margin: 0;
+    font-size: 22px;
+}
+
+#mundo {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+}
+
+#piso {
+    width: 100%;
+    height: 50px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    z-index: 10;
+    background-image: url('https://i.pinimg.com/736x/2f/87/23/2f87236e7dfb88c1a8561200cdddfe6e.jpg');
+    background-size: contain;
+    background-repeat: repeat-x;
+}
+
+/* === MARIO Y SPRITES === */
+#mario {
+    width: 48px;
+    height: 60px;
+    position: absolute;
+    bottom: 50px;
+    left: 40px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: bottom center;
+    transform-origin: bottom center;
+    transition: transform 0.1s;
+    z-index: 5;
+}
+
+/* Skins y estados de Mario */
+#mario.mario-idle {
+    background-image: url('https://i2.wp.com/webstockreview.net/images/mario-clipart-pixel-mario-13.png');
+}
+
+#mario.mario-corriendo {
+    /* Aquí se conectará la sprite sheet de correr que pases */
+    background-image: url('https://i2.wp.com/webstockreview.net/images/mario-clipart-pixel-mario-13.png');
+}
+
+#mario.mario-saltando {
+    background-image: url('https://clipartcraft.com/images/mario-transparent-retro-3.png');
+    background-size: 135%;
+    background-position: bottom center;
+}
+
+#mario.mario-agachado {
+    /* Estado para cuando baja por la tubería */
+    background-image: url('https://i2.wp.com/webstockreview.net/images/mario-clipart-pixel-mario-13.png');
+    transform: scaleY(0.8) !important;
+}
+
+/* Animación de entrada por la tubería */
+#mario.bajando-tubo {
+    transition: bottom 0.8s ease-in, opacity 0.8s ease-in !important;
+    bottom: -20px !important;
+    opacity: 0;
+    z-index: 4; /* Pasa por detrás del borde frontal del tubo */
+}
+
+.bloque {
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    background-image: url('https://i.pinimg.com/1200x/41/b0/98/41b09881e9d7d54f36b519e9cde2a261.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    transition: bottom 0.05s ease-out;
+}
+
+.bloque-amarillo {
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    background-image: url('https://i.pinimg.com/236x/77/e9/43/77e9438bb5fa840004b0de9d6635601c.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.bloque-amarillo.usado {
+    background-image: url('https://i.pinimg.com/736x/83/1c/76/831c76160f5f7f8332c5d16bfaee8db6.jpg');
+}
+
+.cañeria-entrada {
+    position: absolute;
+    background-image: url('https://cdn.pixabay.com/photo/2013/07/12/13/52/super-mario-brothers-147465_1280.png');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    z-index: 6; /* Asegura quedar por encima de Mario cuando él desciende */
+}
