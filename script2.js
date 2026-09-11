@@ -15,7 +15,7 @@ let velocidadY = 0;
 let enElSuelo = false;
 let direccion = 1;
 
-// Cámara y Scroll Limit (No-backtracking)
+// Cámara y Scroll Limit
 let camaraX = 0;
 let limiteIzquierdoAbsoluto = 0;
 
@@ -23,7 +23,12 @@ const velocidadX = 7;
 const gravedad = 0.8;
 const fuerzaSalto = 17;
 
-const teclas = { w: false, a: false, s: false, d: false };
+const teclas = {
+    w: false,
+    a: false,
+    s: false,
+    d: false
+};
 
 // Estados del flujo
 let planta1Arriba = false;
@@ -42,9 +47,9 @@ let hongoActivo = false;
 let hongoX = 0;
 let hongoY = 0;
 
-// SISTEMA DE TEXTOS CON TIMERS Y BLOQUEO DE LECTURA
-let textoBloqueadoHasta = 0; 
-let indicePasoTexto = 0; 
+// SISTEMA DE TEXTOS
+let textoBloqueadoHasta = 0;
+let indicePasoTexto = 0;
 
 function mostrarTextoConTimer(mensaje, duracionMs) {
     textoNivel.textContent = mensaje;
@@ -52,92 +57,212 @@ function mostrarTextoConTimer(mensaje, duracionMs) {
 }
 
 
+// ============================================================
+// CONTROLES
+// ============================================================
+
 window.addEventListener('keydown', (e) => {
+
     const tecla = e.key.toLowerCase();
-    if (teclas.hasOwnProperty(tecla)) teclas[tecla] = true;
+
+    if (teclas.hasOwnProperty(tecla)) {
+        teclas[tecla] = true;
+    }
+
 });
 
 
 window.addEventListener('keyup', (e) => {
+
     const tecla = e.key.toLowerCase();
-    if (teclas.hasOwnProperty(tecla)) teclas[tecla] = false;
+
+    if (teclas.hasOwnProperty(tecla)) {
+        teclas[tecla] = false;
+    }
+
 });
 
 
-// Ciclo de Planta 1 (Sube y baja)
-setInterval(() => {
-    if (marioMuerto) return;
+// ============================================================
+// CICLO DE PLANTA 1
+// ============================================================
 
+// La planta empieza escondida.
+// Después sale y vuelve a entrar continuamente.
+
+function cicloPlanta1() {
+
+    if (!planta1) return;
+
+    // Si Mario está muerto,
+    // dejamos la planta escondida.
+    if (marioMuerto) {
+
+        planta1Arriba = false;
+
+        planta1.style.bottom = '110px';
+
+        setTimeout(cicloPlanta1, 200);
+
+        return;
+    }
+
+
+    // Cambiamos entre arriba y abajo
     planta1Arriba = !planta1Arriba;
 
-    if (planta1) {
-        planta1.style.bottom = planta1Arriba ? '160px' : '90px';
-    }
 
-}, 2000);
+    if (planta1Arriba) {
 
+        // SALE de la tubería
+        planta1.style.bottom = '160px';
 
-function actualizarTextosYCamara() {
-    const anchoPantalla = window.innerWidth;
-    const objetivoCamara = marioX - (anchoPantalla / 3);
-
-    if (objetivoCamara > camaraX) {
-        camaraX = objetivoCamara;
-        limiteIzquierdoAbsoluto = camaraX;
-    }
-
-    escenario.style.transform = `translateX(${-camaraX}px)`;
-
-    const ahora = Date.now();
-
-    if (ahora < textoBloqueadoHasta) return;
-
-    if (marioEsFantasma) {
-        textoNivel.textContent = "PERO TE DAMOS OTRA OPORTUNIDAD";
     } else {
 
-        if (indicePasoTexto === 0 && marioX >= 171) {
-            mostrarTextoConTimer("MARIO BROS NO USA MACHINE LEARNING", 2000);
-            indicePasoTexto = 1;
+        // ENTRA completamente en la tubería
+        planta1.style.bottom = '110px';
 
-        } else if (indicePasoTexto === 1 && marioX >= 550) {
-            mostrarTextoConTimer("PERO SI LO TUVIERA...", 1800);
-            indicePasoTexto = 2;
-
-        } else if (indicePasoTexto === 2 && marioX >= 900) {
-            mostrarTextoConTimer("PODRÍA APRENDER TU COMPORTAMIENTO", 1500);
-            indicePasoTexto = 3;
-        }
     }
+
+
+    // Repite el ciclo
+    setTimeout(cicloPlanta1, 2000);
 }
 
 
+// Empieza escondida
+if (planta1) {
+
+    planta1.style.bottom = '110px';
+
+    // Espera antes de la primera salida
+    setTimeout(cicloPlanta1, 1200);
+
+}
+
+
+// ============================================================
+// CÁMARA Y TEXTOS
+// ============================================================
+
+function actualizarTextosYCamara() {
+
+    const anchoPantalla = window.innerWidth;
+
+    const objetivoCamara =
+        marioX - (anchoPantalla / 3);
+
+
+    if (objetivoCamara > camaraX) {
+
+        camaraX = objetivoCamara;
+
+        limiteIzquierdoAbsoluto = camaraX;
+
+    }
+
+
+    escenario.style.transform =
+        `translateX(${-camaraX}px)`;
+
+
+    const ahora = Date.now();
+
+    if (ahora < textoBloqueadoHasta) {
+        return;
+    }
+
+
+    if (marioEsFantasma) {
+
+        textoNivel.textContent =
+            "PERO TE DAMOS OTRA OPORTUNIDAD";
+
+    } else {
+
+        if (indicePasoTexto === 0 && marioX >= 171) {
+
+            mostrarTextoConTimer(
+                "MARIO BROS NO USA MACHINE LEARNING",
+                2000
+            );
+
+            indicePasoTexto = 1;
+
+
+        } else if (indicePasoTexto === 1 && marioX >= 550) {
+
+            mostrarTextoConTimer(
+                "PERO SI LO TUVIERA...",
+                1800
+            );
+
+            indicePasoTexto = 2;
+
+
+        } else if (indicePasoTexto === 2 && marioX >= 900) {
+
+            mostrarTextoConTimer(
+                "PODRÍA APRENDER TU COMPORTAMIENTO",
+                1500
+            );
+
+            indicePasoTexto = 3;
+
+        }
+
+    }
+
+}
+
+
+// ============================================================
+// COLISIONES
+// ============================================================
+
 function resolverColisiones(siguienteX, siguienteY) {
-    const obstaculos = document.querySelectorAll('.obstaculo');
+
+    const obstaculos =
+        document.querySelectorAll('.obstaculo');
+
 
     const marioWidth = 48;
     const marioHeight = 60;
 
+
     let resultado = {
+
         x: siguienteX,
         y: siguienteY,
         enPlataforma: false
+
     };
+
 
     obstaculos.forEach(elem => {
 
-        const bLeft = parseInt(elem.style.left) || elem.offsetLeft;
-        const bBottom = parseInt(elem.style.bottom) || 50;
-        const bWidth = elem.offsetWidth;
-        const bHeight = elem.offsetHeight;
+        const bLeft =
+            parseInt(elem.style.left) || elem.offsetLeft;
+
+        const bBottom =
+            parseInt(elem.style.bottom) || 50;
+
+        const bWidth =
+            elem.offsetWidth;
+
+        const bHeight =
+            elem.offsetHeight;
+
 
         const solapeX =
             (resultado.x + marioWidth > bLeft) &&
             (resultado.x < bLeft + bWidth);
 
+
         const solapeY =
             (resultado.y + marioHeight > bBottom) &&
             (resultado.y < bBottom + bHeight);
+
 
         if (solapeX && solapeY) {
 
@@ -145,84 +270,137 @@ function resolverColisiones(siguienteX, siguienteY) {
                 (marioX + marioWidth > bLeft) &&
                 (marioX < bLeft + bWidth);
 
+
             if (previoSolapeX) {
 
                 if (
                     velocidadY <= 0 &&
                     marioY >= bBottom + bHeight - 20
                 ) {
-                    resultado.y = bBottom + bHeight;
+
+                    resultado.y =
+                        bBottom + bHeight;
+
                     velocidadY = 0;
+
                     resultado.enPlataforma = true;
+
                 }
 
             } else {
 
                 if (marioX + marioWidth <= bLeft) {
-                    resultado.x = bLeft - marioWidth;
+
+                    resultado.x =
+                        bLeft - marioWidth;
 
                 } else if (marioX >= bLeft + bWidth) {
-                    resultado.x = bLeft + bWidth;
+
+                    resultado.x =
+                        bLeft + bWidth;
+
                 }
+
             }
+
         }
+
     });
+
 
     return resultado;
 }
 
 
+// ============================================================
+// CONTACTO CON PLANTA 1
+// ============================================================
+
 function comprobarContactoPlanta1() {
 
-    if (marioMuerto || !planta1Arriba) return;
+    if (marioMuerto || !planta1Arriba) {
+        return;
+    }
+
 
     const pLeft = 520;
     const pWidth = 40;
     const pBottom = 160;
     const pHeight = 50;
 
+
     const marioWidth = 48;
     const marioHeight = 60;
+
 
     const solapeX =
         (marioX + marioWidth > pLeft) &&
         (marioX < pLeft + pWidth);
 
+
     const solapeY =
         (marioY + marioHeight > pBottom) &&
         (marioY < pBottom + pHeight);
 
+
     if (solapeX && solapeY) {
 
-        marioX = limiteIzquierdoAbsoluto + 20;
+        marioX =
+            limiteIzquierdoAbsoluto + 20;
+
         marioY = nivelSuelo;
+
         velocidadY = 0;
+
     }
+
 }
 
 
+// ============================================================
+// ATAQUE PLANTA 2
+// ============================================================
+
 function comprobarAtaquePlanta2() {
 
-    if (planta2DisparoLanzado || marioMuerto) return;
+    if (planta2DisparoLanzado || marioMuerto) {
+        return;
+    }
+
 
     const p2Left =
         planta2
             ? (parseInt(planta2.style.left) || planta2.offsetLeft)
             : 1720;
 
-    const distancia = p2Left - marioX;
-    const umbral18 = window.innerWidth / 8;
+
+    const distancia =
+        p2Left - marioX;
+
+
+    const umbral18 =
+        window.innerWidth / 8;
+
 
     if (distancia > 0 && distancia <= umbral18) {
 
         planta2DisparoLanzado = true;
+
         controlesBloqueados = true;
 
-        mostrarTextoConTimer("Y CAMBIAR EL SUYO.", 3000);
 
-        const espinaOrigenX = p2Left + 20;
+        mostrarTextoConTimer(
+            "Y CAMBIAR EL SUYO.",
+            3000
+        );
+
+
+        const espinaOrigenX =
+            p2Left + 20;
+
         const espinaOrigenY =
             (parseInt(planta2.style.bottom) || 160) + 50;
+
 
         lanzarEspina(
             marioX + 24,
@@ -230,42 +408,84 @@ function comprobarAtaquePlanta2() {
             espinaOrigenX,
             espinaOrigenY
         );
+
     }
+
 }
 
 
-function lanzarEspina(targetX, targetY, origenX, origenY) {
+// ============================================================
+// ESPINA
+// ============================================================
+
+function lanzarEspina(
+    targetX,
+    targetY,
+    origenX,
+    origenY
+) {
 
     espinaX = origenX;
     espinaY = origenY;
 
+
     espina.style.display = 'block';
 
-    const dx = targetX - espinaX;
-    const dy = targetY - espinaY;
-    const dist = Math.hypot(dx, dy);
+
+    const dx =
+        targetX - espinaX;
+
+    const dy =
+        targetY - espinaY;
+
+
+    const dist =
+        Math.hypot(dx, dy);
+
 
     const velocidadEspina = 18;
 
-    espinaVX = (dx / dist) * velocidadEspina;
-    espinaVY = (dy / dist) * velocidadEspina;
+
+    espinaVX =
+        (dx / dist) * velocidadEspina;
+
+    espinaVY =
+        (dy / dist) * velocidadEspina;
+
 
     espinaActiva = true;
+
 }
 
 
+// ============================================================
+// ACTUALIZAR ESPINA
+// ============================================================
+
 function actualizarEspina() {
 
-    if (!espinaActiva) return;
+    if (!espinaActiva) {
+        return;
+    }
+
 
     espinaX += espinaVX;
     espinaY += espinaVY;
 
-    espina.style.left = espinaX + 'px';
-    espina.style.bottom = espinaY + 'px';
 
-    const centroMarioX = marioX + 24;
-    const centroMarioY = marioY + 30;
+    espina.style.left =
+        espinaX + 'px';
+
+    espina.style.bottom =
+        espinaY + 'px';
+
+
+    const centroMarioX =
+        marioX + 24;
+
+    const centroMarioY =
+        marioY + 30;
+
 
     if (
         Math.hypot(
@@ -275,72 +495,100 @@ function actualizarEspina() {
     ) {
 
         espinaActiva = false;
+
         espina.style.display = 'none';
 
         ejecutarMuerteFantasma();
+
     }
+
 }
 
+
+// ============================================================
+// MUERTE FANTASMA
+// ============================================================
 
 function ejecutarMuerteFantasma() {
 
     marioMuerto = true;
+
     marioEsFantasma = true;
+
     controlesBloqueados = false;
+
 
     velocidadY = 14;
 
+
     setTimeout(() => {
 
-        mario.classList.add('mario-fantasma');
+        mario.classList.add(
+            'mario-fantasma'
+        );
+
 
         mostrarTextoConTimer(
             "PERO TE DAMOS OTRA OPORTUNIDAD",
             4000
         );
 
+
         aparecerHongo();
 
     }, 300);
+
 }
 
 
 // ============================================================
-// HONGO REVIVIDOR
+// HONGO
 // ============================================================
 
 function aparecerHongo() {
 
-    // El hongo aparece exactamente sobre Mario.
     hongoX = marioX;
 
-    // Aparece 180px por encima de Mario.
     hongoY = marioY + 180;
 
-    hongo.style.left = hongoX + 'px';
-    hongo.style.bottom = hongoY + 'px';
 
-    hongo.style.display = 'block';
+    hongo.style.left =
+        hongoX + 'px';
+
+    hongo.style.bottom =
+        hongoY + 'px';
+
+
+    hongo.style.display =
+        'block';
+
 
     hongoActivo = true;
+
 }
 
 
 function actualizarHongo() {
 
-    if (!hongoActivo) return;
-
-    // El hongo cae verticalmente.
-    // No cambia su posición X.
-    if (hongoY > nivelSuelo) {
-        hongoY -= 1;
+    if (!hongoActivo) {
+        return;
     }
 
-    hongo.style.left = hongoX + 'px';
-    hongo.style.bottom = hongoY + 'px';
+
+    if (hongoY > nivelSuelo) {
+
+        hongoY -= 1;
+
+    }
 
 
-    // Tamaño aproximado de los elementos.
+    hongo.style.left =
+        hongoX + 'px';
+
+    hongo.style.bottom =
+        hongoY + 'px';
+
+
     const hongoWidth = 40;
     const hongoHeight = 40;
 
@@ -348,10 +596,10 @@ function actualizarHongo() {
     const marioHeight = 60;
 
 
-    // Comprobamos si el hongo toca a Mario.
     const solapeX =
         hongoX + hongoWidth > marioX &&
         hongoX < marioX + marioWidth;
+
 
     const solapeY =
         hongoY < marioY + marioHeight &&
@@ -360,25 +608,37 @@ function actualizarHongo() {
 
     if (solapeX && solapeY) {
 
-        // El hongo desaparece.
         hongoActivo = false;
-        hongo.style.display = 'none';
 
-        // Mario revive.
+        hongo.style.display =
+            'none';
+
+
         marioEsFantasma = false;
+
         marioMuerto = false;
+
         controlesBloqueados = false;
 
-        // Mario cae/queda en el suelo.
+
         marioY = nivelSuelo;
+
         velocidadY = 0;
+
         enElSuelo = true;
 
-        // Recupera la skin idle.
-        mario.className = 'mario-idle';
+
+        mario.className =
+            'mario-idle';
+
     }
+
 }
 
+
+// ============================================================
+// LOOP PRINCIPAL
+// ============================================================
 
 function actualizar() {
 
@@ -389,6 +649,7 @@ function actualizar() {
         actualizarEspina();
     }
 
+
     if (hongoActivo) {
         actualizarHongo();
     }
@@ -397,27 +658,41 @@ function actualizar() {
     if (!marioMuerto) {
 
         let nuevoX = marioX;
+
         let moviendose = false;
 
 
         if (!controlesBloqueados) {
 
             if (teclas.a) {
+
                 nuevoX -= velocidadX;
+
                 direccion = -1;
+
                 moviendose = true;
+
             }
 
+
             if (teclas.d) {
+
                 nuevoX += velocidadX;
+
                 direccion = 1;
+
                 moviendose = true;
+
             }
+
         }
 
 
         if (nuevoX < limiteIzquierdoAbsoluto) {
-            nuevoX = limiteIzquierdoAbsoluto;
+
+            nuevoX =
+                limiteIzquierdoAbsoluto;
+
         }
 
 
@@ -426,41 +701,57 @@ function actualizar() {
             enElSuelo &&
             !controlesBloqueados
         ) {
-            velocidadY = fuerzaSalto;
+
+            velocidadY =
+                fuerzaSalto;
+
             enElSuelo = false;
+
         }
 
 
-        let nuevoY = marioY + velocidadY;
+        let nuevoY =
+            marioY + velocidadY;
+
 
         velocidadY -= gravedad;
 
 
         const colision =
-            resolverColisiones(nuevoX, nuevoY);
+            resolverColisiones(
+                nuevoX,
+                nuevoY
+            );
+
 
         marioX = colision.x;
+
         marioY = colision.y;
 
 
         if (colision.enPlataforma) {
 
             enElSuelo = true;
+
             velocidadY = 0;
 
         } else if (marioY <= nivelSuelo) {
 
             marioY = nivelSuelo;
+
             velocidadY = 0;
+
             enElSuelo = true;
 
         } else {
 
             enElSuelo = false;
+
         }
 
 
         comprobarContactoPlanta1();
+
         comprobarAtaquePlanta2();
 
 
@@ -469,49 +760,65 @@ function actualizar() {
 
         if (marioEsFantasma) {
 
-            mario.classList.add('mario-fantasma');
+            mario.classList.add(
+                'mario-fantasma'
+            );
 
         } else if (!enElSuelo) {
 
-            mario.classList.add('mario-saltando');
+            mario.classList.add(
+                'mario-saltando'
+            );
 
         } else if (moviendose) {
 
-            mario.classList.add('mario-corriendo');
+            mario.classList.add(
+                'mario-corriendo'
+            );
 
         } else {
 
-            mario.classList.add('mario-idle');
+            mario.classList.add(
+                'mario-idle'
+            );
+
         }
 
 
-    } else if (marioMuerto && marioEsFantasma) {
-
-        // Mario sigue cayendo mientras espera al hongo.
-        // Esta es la única modificación necesaria respecto
-        // a la lógica anterior: antes esta caída se detenía
-        // mientras el hongo estaba activo.
+    } else if (
+        marioMuerto &&
+        marioEsFantasma
+    ) {
 
         marioY += velocidadY;
+
         velocidadY -= gravedad;
 
+
         if (marioY < nivelSuelo) {
+
             marioY = nivelSuelo;
+
             velocidadY = 0;
+
         }
+
     }
 
 
-    // Mantiene la orientación exacta según la dirección
-    // sin romper la física.
     mario.style.transform =
         `scaleX(${direccion * 1.2}) scaleY(1.2)`;
 
-    mario.style.left = marioX + 'px';
-    mario.style.bottom = marioY + 'px';
+
+    mario.style.left =
+        marioX + 'px';
+
+    mario.style.bottom =
+        marioY + 'px';
 
 
     requestAnimationFrame(actualizar);
+
 }
 
 

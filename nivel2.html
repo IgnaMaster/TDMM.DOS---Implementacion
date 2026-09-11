@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>Mario ML - Nivel 2</title>
     <link rel="stylesheet" href="style.css">
+
     <style>
         #juego-nivel2 {
             background-color: #000;
@@ -18,7 +19,7 @@
             top: 0;
             left: 0;
             height: 100%;
-            width: 3200px; /* Ancho extendido para el scroll */
+            width: 3200px;
             will-change: transform;
         }
 
@@ -52,26 +53,32 @@
         /* Planta Piraña 1 */
         #planta1 {
             position: absolute;
-            width: 40px;
-            height: 50px;
+            width: 55px;
+height: 75px;
             left: 520px;
-            bottom: 150px;
-            background-image: url('https://www.pngkey.com/png/full/223-2236894_mario-piranha-plant-pixel-art.png');
+
+            /* Empieza escondida dentro de la tubería */
+            bottom: 110px;
+
+            background-image: url('img/planta.png');
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
-            z-index: 8; /* Detrás de la boca del tubo */
+
+            z-index: 8;
+
+            /* Velocidad de salida/entrada */
             transition: bottom 0.6s ease-in-out;
         }
 
         /* Planta Piraña 2 */
         #planta2 {
             position: absolute;
-            width: 40px;
-            height: 50px;
+            width: 55px;
+height: 75px;
             left: 1220px;
             bottom: 160px;
-            background-image: url('https://www.pngkey.com/png/full/223-2236894_mario-piranha-plant-pixel-art.png');
+            background-image: url('img/planta.png');
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
@@ -91,17 +98,17 @@
         }
 
         /* Hongo Revividor */
-       #hongo {
-    position: absolute;
-    width: 40px;
-    height: 40px;
-    background-image: url('img/vida.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    z-index: 15;
-    display: none;
-}
+        #hongo {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background-image: url('img/vida.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            z-index: 15;
+            display: none;
+        }
 
         /* Skin Fantasma */
         #mario.mario-fantasma {
@@ -115,34 +122,55 @@
 <body>
 
     <div id="juego" id="juego-nivel2">
-        <div id="texto-nivel2">MARIO BROS NO USA MACHINE LEARNING</div>
+
+        <div id="texto-nivel2">
+            MARIO BROS NO USA MACHINE LEARNING
+        </div>
 
         <div id="escenario">
-            <div id="mundo">
-                <!-- Tubería 0: Salida alta inicial -->
-                <div class="tuberia obstaculo" style="left: 150px; bottom: 50px; width: 90px; height: 180px;"></div>
 
-                <!-- Tubería 1 con Planta 1 (sube/baja) -->
-                <div class="tuberia obstaculo" style="left: 500px; bottom: 50px; width: 80px; height: 110px;"></div>
+            <div id="mundo">
+
+                <!-- Tubería 0: Salida alta inicial -->
+                <div class="tuberia obstaculo"
+                    style="left: 150px; bottom: 50px; width: 90px; height: 180px;">
+                </div>
+
+                <!-- Tubería 1 con Planta 1 -->
+                <div class="tuberia obstaculo"
+                    style="left: 500px; bottom: 50px; width: 80px; height: 110px;">
+                </div>
+
                 <div id="planta1"></div>
 
-                <!-- Tubería 2 con Planta 2 desplazadas a left: 1700px -->
-<div class="tuberia obstaculo" style="left: 1700px; bottom: 50px; width: 80px; height: 110px;"></div>
-<div id="planta2" style="left: 1720px; bottom: 160px;"></div>
+                <!-- Tubería 2 con Planta 2 -->
+                <div class="tuberia obstaculo"
+                    style="left: 1700px; bottom: 50px; width: 80px; height: 110px;">
+                </div>
+
+                <div id="planta2"
+                    style="left: 1720px; bottom: 160px;">
+                </div>
 
                 <!-- Proyectil & Hongo -->
                 <div id="espina"></div>
                 <div id="hongo"></div>
 
                 <!-- Mario -->
-                <div id="mario" class="mario-idle" style="left: 171px; bottom: 230px;"></div>
+                <div id="mario"
+                    class="mario-idle"
+                    style="left: 171px; bottom: 230px;">
+                </div>
+
             </div>
 
             <div id="piso"></div>
+
         </div>
+
     </div>
 
     <script src="script2.js"></script>
-</body>
 
+</body>
 </html>
