@@ -1,59 +1,126 @@
 const mario = document.getElementById('mario');
+
 const escenario = document.getElementById('escenario');
+
 const textoNivel = document.getElementById('texto-nivel2');
+
 const planta1 = document.getElementById('planta1');
+
 const planta2 = document.getElementById('planta2');
+
 const espina = document.getElementById('espina');
+
 const hongo = document.getElementById('hongo');
+
+const tuboSalida = document.getElementById('tubo-salida');
 
 const nivelSuelo = 50;
 
-// Posición inicial de Mario
+
+// ============================================================
+// POSICIÓN INICIAL DE MARIO
+// ============================================================
+
 let marioX = 171;
 let marioY = 230;
+
 let velocidadY = 0;
+
 let enElSuelo = false;
+
 let direccion = 1;
 
-// Cámara y Scroll Limit
+
+// ============================================================
+// CÁMARA Y SCROLL
+// ============================================================
+
 let camaraX = 0;
+
 let limiteIzquierdoAbsoluto = 0;
 
+
+// ============================================================
+// FÍSICA
+// ============================================================
+
 const velocidadX = 7;
+
 const gravedad = 0.8;
+
 const fuerzaSalto = 17;
 
+
+// ============================================================
+// CONTROLES
+// ============================================================
+
 const teclas = {
+
     w: false,
+
     a: false,
+
     s: false,
+
     d: false
+
 };
 
-// Estados del flujo
+
+// ============================================================
+// ESTADOS
+// ============================================================
+
 let planta1Arriba = false;
+
 let planta2DisparoLanzado = false;
+
 let espinaActiva = false;
+
 let espinaVX = 0;
+
 let espinaVY = 0;
+
 let espinaX = 0;
+
 let espinaY = 0;
 
 let marioMuerto = false;
+
 let marioEsFantasma = false;
+
 let controlesBloqueados = false;
 
 let hongoActivo = false;
+
 let hongoX = 0;
+
 let hongoY = 0;
 
+
+// ============================================================
+// ESTADO DE LA TUBERÍA
+// ============================================================
+
+let bajandoTubo = false;
+
+
+// ============================================================
 // SISTEMA DE TEXTOS
+// ============================================================
+
 let textoBloqueadoHasta = 0;
+
 let indicePasoTexto = 0;
 
+
 function mostrarTextoConTimer(mensaje, duracionMs) {
+
     textoNivel.textContent = mensaje;
-    textoBloqueadoHasta = Date.now() + duracionMs;
+
+    textoBloqueadoHasta =
+        Date.now() + duracionMs;
 }
 
 
@@ -66,6 +133,7 @@ window.addEventListener('keydown', (e) => {
     const tecla = e.key.toLowerCase();
 
     if (teclas.hasOwnProperty(tecla)) {
+
         teclas[tecla] = true;
     }
 
@@ -77,6 +145,7 @@ window.addEventListener('keyup', (e) => {
     const tecla = e.key.toLowerCase();
 
     if (teclas.hasOwnProperty(tecla)) {
+
         teclas[tecla] = false;
     }
 
@@ -94,8 +163,10 @@ function cicloPlanta1() {
 
     if (!planta1) return;
 
+
     // Si Mario está muerto,
     // dejamos la planta escondida.
+
     if (marioMuerto) {
 
         planta1Arriba = false;
@@ -109,35 +180,39 @@ function cicloPlanta1() {
 
 
     // Cambiamos entre arriba y abajo
+
     planta1Arriba = !planta1Arriba;
 
 
     if (planta1Arriba) {
 
         // SALE de la tubería
+
         planta1.style.bottom = '160px';
 
     } else {
 
         // ENTRA completamente en la tubería
-        planta1.style.bottom = '110px';
 
+        planta1.style.bottom = '110px';
     }
 
 
     // Repite el ciclo
+
     setTimeout(cicloPlanta1, 2000);
 }
 
 
 // Empieza escondida
+
 if (planta1) {
 
     planta1.style.bottom = '110px';
 
     // Espera antes de la primera salida
-    setTimeout(cicloPlanta1, 1200);
 
+    setTimeout(cicloPlanta1, 1200);
 }
 
 
@@ -147,7 +222,9 @@ if (planta1) {
 
 function actualizarTextosYCamara() {
 
-    const anchoPantalla = window.innerWidth;
+    const anchoPantalla =
+        window.innerWidth;
+
 
     const objetivoCamara =
         marioX - (anchoPantalla / 3);
@@ -158,7 +235,6 @@ function actualizarTextosYCamara() {
         camaraX = objetivoCamara;
 
         limiteIzquierdoAbsoluto = camaraX;
-
     }
 
 
@@ -168,7 +244,9 @@ function actualizarTextosYCamara() {
 
     const ahora = Date.now();
 
+
     if (ahora < textoBloqueadoHasta) {
+
         return;
     }
 
@@ -180,102 +258,134 @@ function actualizarTextosYCamara() {
 
     } else {
 
-        if (indicePasoTexto === 0 && marioX >= 171) {
+        if (
+            indicePasoTexto === 0 &&
+            marioX >= 171
+        ) {
 
             mostrarTextoConTimer(
+
                 "MARIO BROS NO USA MACHINE LEARNING",
+
                 2000
             );
 
             indicePasoTexto = 1;
 
 
-        } else if (indicePasoTexto === 1 && marioX >= 550) {
+        } else if (
+            indicePasoTexto === 1 &&
+            marioX >= 550
+        ) {
 
             mostrarTextoConTimer(
+
                 "PERO SI LO TUVIERA...",
+
                 1800
             );
 
             indicePasoTexto = 2;
 
 
-        } else if (indicePasoTexto === 2 && marioX >= 900) {
+        } else if (
+            indicePasoTexto === 2 &&
+            marioX >= 900
+        ) {
 
             mostrarTextoConTimer(
+
                 "PODRÍA APRENDER TU COMPORTAMIENTO",
+
                 1500
             );
 
             indicePasoTexto = 3;
-
         }
-
     }
-
 }
 
 
 // ============================================================
-// COLISIONES
+// COLISIONES CON OBSTÁCULOS
 // ============================================================
 
-function resolverColisiones(siguienteX, siguienteY) {
+function resolverColisiones(
+    siguienteX,
+    siguienteY
+) {
 
     const obstaculos =
         document.querySelectorAll('.obstaculo');
 
 
     const marioWidth = 48;
+
     const marioHeight = 60;
 
 
     let resultado = {
 
         x: siguienteX,
-        y: siguienteY,
-        enPlataforma: false
 
+        y: siguienteY,
+
+        enPlataforma: false
     };
 
 
     obstaculos.forEach(elem => {
 
         const bLeft =
-            parseInt(elem.style.left) || elem.offsetLeft;
+            parseInt(elem.style.left) ||
+            elem.offsetLeft;
+
 
         const bBottom =
-            parseInt(elem.style.bottom) || 50;
+            parseInt(elem.style.bottom) ||
+            50;
+
 
         const bWidth =
             elem.offsetWidth;
+
 
         const bHeight =
             elem.offsetHeight;
 
 
         const solapeX =
+
             (resultado.x + marioWidth > bLeft) &&
+
             (resultado.x < bLeft + bWidth);
 
 
         const solapeY =
+
             (resultado.y + marioHeight > bBottom) &&
+
             (resultado.y < bBottom + bHeight);
 
 
         if (solapeX && solapeY) {
 
             const previoSolapeX =
+
                 (marioX + marioWidth > bLeft) &&
+
                 (marioX < bLeft + bWidth);
 
 
             if (previoSolapeX) {
 
                 if (
+
                     velocidadY <= 0 &&
-                    marioY >= bBottom + bHeight - 20
+
+                    marioY >=
+                    bBottom + bHeight - 20
+
                 ) {
 
                     resultado.y =
@@ -284,25 +394,25 @@ function resolverColisiones(siguienteX, siguienteY) {
                     velocidadY = 0;
 
                     resultado.enPlataforma = true;
-
                 }
 
             } else {
 
-                if (marioX + marioWidth <= bLeft) {
+                if (
+                    marioX + marioWidth <= bLeft
+                ) {
 
                     resultado.x =
                         bLeft - marioWidth;
 
-                } else if (marioX >= bLeft + bWidth) {
+                } else if (
+                    marioX >= bLeft + bWidth
+                ) {
 
                     resultado.x =
                         bLeft + bWidth;
-
                 }
-
             }
-
         }
 
     });
@@ -318,28 +428,40 @@ function resolverColisiones(siguienteX, siguienteY) {
 
 function comprobarContactoPlanta1() {
 
-    if (marioMuerto || !planta1Arriba) {
+    if (
+        marioMuerto ||
+        !planta1Arriba
+    ) {
+
         return;
     }
 
 
     const pLeft = 520;
+
     const pWidth = 40;
+
     const pBottom = 160;
+
     const pHeight = 50;
 
 
     const marioWidth = 48;
+
     const marioHeight = 60;
 
 
     const solapeX =
+
         (marioX + marioWidth > pLeft) &&
+
         (marioX < pLeft + pWidth);
 
 
     const solapeY =
+
         (marioY + marioHeight > pBottom) &&
+
         (marioY < pBottom + pHeight);
 
 
@@ -348,12 +470,11 @@ function comprobarContactoPlanta1() {
         marioX =
             limiteIzquierdoAbsoluto + 20;
 
-        marioY = nivelSuelo;
+        marioY =
+            nivelSuelo;
 
         velocidadY = 0;
-
     }
-
 }
 
 
@@ -363,14 +484,22 @@ function comprobarContactoPlanta1() {
 
 function comprobarAtaquePlanta2() {
 
-    if (planta2DisparoLanzado || marioMuerto) {
+    if (
+        planta2DisparoLanzado ||
+        marioMuerto
+    ) {
+
         return;
     }
 
 
     const p2Left =
+
         planta2
-            ? (parseInt(planta2.style.left) || planta2.offsetLeft)
+            ? (
+                parseInt(planta2.style.left) ||
+                planta2.offsetLeft
+            )
             : 1720;
 
 
@@ -382,7 +511,10 @@ function comprobarAtaquePlanta2() {
         window.innerWidth / 8;
 
 
-    if (distancia > 0 && distancia <= umbral18) {
+    if (
+        distancia > 0 &&
+        distancia <= umbral18
+    ) {
 
         planta2DisparoLanzado = true;
 
@@ -390,7 +522,9 @@ function comprobarAtaquePlanta2() {
 
 
         mostrarTextoConTimer(
+
             "Y CAMBIAR EL SUYO.",
+
             3000
         );
 
@@ -398,42 +532,57 @@ function comprobarAtaquePlanta2() {
         const espinaOrigenX =
             p2Left + 20;
 
+
         const espinaOrigenY =
-            (parseInt(planta2.style.bottom) || 160) + 50;
+
+            (
+                parseInt(planta2.style.bottom) ||
+                160
+            ) + 50;
 
 
         lanzarEspina(
+
             marioX + 24,
+
             marioY + 30,
+
             espinaOrigenX,
+
             espinaOrigenY
         );
-
     }
-
 }
 
 
 // ============================================================
-// ESPINA
+// LANZAR ESPINA
 // ============================================================
 
 function lanzarEspina(
+
     targetX,
+
     targetY,
+
     origenX,
+
     origenY
+
 ) {
 
     espinaX = origenX;
+
     espinaY = origenY;
 
 
-    espina.style.display = 'block';
+    espina.style.display =
+        'block';
 
 
     const dx =
         targetX - espinaX;
+
 
     const dy =
         targetY - espinaY;
@@ -447,14 +596,16 @@ function lanzarEspina(
 
 
     espinaVX =
-        (dx / dist) * velocidadEspina;
+        (dx / dist) *
+        velocidadEspina;
+
 
     espinaVY =
-        (dy / dist) * velocidadEspina;
+        (dy / dist) *
+        velocidadEspina;
 
 
     espinaActiva = true;
-
 }
 
 
@@ -465,16 +616,19 @@ function lanzarEspina(
 function actualizarEspina() {
 
     if (!espinaActiva) {
+
         return;
     }
 
 
     espinaX += espinaVX;
+
     espinaY += espinaVY;
 
 
     espina.style.left =
         espinaX + 'px';
+
 
     espina.style.bottom =
         espinaY + 'px';
@@ -483,25 +637,31 @@ function actualizarEspina() {
     const centroMarioX =
         marioX + 24;
 
+
     const centroMarioY =
         marioY + 30;
 
 
     if (
+
         Math.hypot(
+
             espinaX - centroMarioX,
+
             espinaY - centroMarioY
+
         ) < 35
+
     ) {
 
         espinaActiva = false;
 
-        espina.style.display = 'none';
+        espina.style.display =
+            'none';
+
 
         ejecutarMuerteFantasma();
-
     }
-
 }
 
 
@@ -529,7 +689,9 @@ function ejecutarMuerteFantasma() {
 
 
         mostrarTextoConTimer(
+
             "PERO TE DAMOS OTRA OPORTUNIDAD",
+
             4000
         );
 
@@ -537,7 +699,6 @@ function ejecutarMuerteFantasma() {
         aparecerHongo();
 
     }, 300);
-
 }
 
 
@@ -555,6 +716,7 @@ function aparecerHongo() {
     hongo.style.left =
         hongoX + 'px';
 
+
     hongo.style.bottom =
         hongoY + 'px';
 
@@ -564,13 +726,17 @@ function aparecerHongo() {
 
 
     hongoActivo = true;
-
 }
 
+
+// ============================================================
+// ACTUALIZAR HONGO
+// ============================================================
 
 function actualizarHongo() {
 
     if (!hongoActivo) {
+
         return;
     }
 
@@ -578,31 +744,37 @@ function actualizarHongo() {
     if (hongoY > nivelSuelo) {
 
         hongoY -= 1;
-
     }
 
 
     hongo.style.left =
         hongoX + 'px';
 
+
     hongo.style.bottom =
         hongoY + 'px';
 
 
     const hongoWidth = 40;
+
     const hongoHeight = 40;
 
     const marioWidth = 48;
+
     const marioHeight = 60;
 
 
     const solapeX =
+
         hongoX + hongoWidth > marioX &&
+
         hongoX < marioX + marioWidth;
 
 
     const solapeY =
+
         hongoY < marioY + marioHeight &&
+
         hongoY + hongoHeight > marioY;
 
 
@@ -630,9 +802,133 @@ function actualizarHongo() {
 
         mario.className =
             'mario-idle';
+    }
+}
 
+
+// ============================================================
+// ENTRADA A LA TUBERÍA DE SALIDA
+// ============================================================
+
+function comprobarEntradaTubo() {
+
+    if (
+        !tuboSalida ||
+        bajandoTubo ||
+        marioMuerto
+    ) {
+
+        return;
     }
 
+
+    const tuboLeft =
+
+        parseInt(
+            tuboSalida.style.left
+        );
+
+
+    const tuboWidth =
+        tuboSalida.offsetWidth;
+
+
+    const tuboHeight =
+        tuboSalida.offsetHeight;
+
+
+    const tuboBottom =
+
+        parseInt(
+            tuboSalida.style.bottom
+        );
+
+
+    const tuboTopY =
+        tuboBottom + tuboHeight;
+
+
+    const marioWidth = 48;
+
+
+    /*
+     * Comprobamos que Mario esté
+     * encima de la tubería.
+     */
+
+    const sobreTuboX =
+
+        (marioX + marioWidth / 2 >= tuboLeft) &&
+
+        (marioX + marioWidth / 2 <=
+            tuboLeft + tuboWidth);
+
+
+    const sobreTuboY =
+
+        Math.abs(
+            marioY - tuboTopY
+        ) < 8;
+
+
+    /*
+     * Si está encima y presiona S,
+     * comienza a bajar.
+     */
+
+    if (
+        sobreTuboX &&
+        sobreTuboY &&
+        teclas.s &&
+        enElSuelo
+    ) {
+
+        bajandoTubo = true;
+
+        controlesBloqueados = true;
+
+
+        /*
+         * Centramos a Mario
+         * con la tubería.
+         */
+
+        marioX =
+
+            tuboLeft +
+            (tuboWidth / 2) -
+            (marioWidth / 2);
+
+
+        mario.style.left =
+            marioX + 'px';
+
+
+        /*
+         * Quitamos la animación normal
+         * y aplicamos la de la tubería.
+         */
+
+        mario.className = '';
+
+        mario.classList.add(
+            'mario-agachado',
+            'bajando-tubo'
+        );
+
+
+        /*
+         * Después de bajar por la tubería,
+         * pasamos al nivel 3.
+         */
+
+        setTimeout(() => {
+
+            window.location.href =
+                "nivel3.html";
+
+        }, 800);
+    }
 }
 
 
@@ -646,14 +942,41 @@ function actualizar() {
 
 
     if (espinaActiva) {
+
         actualizarEspina();
     }
 
 
     if (hongoActivo) {
+
         actualizarHongo();
     }
 
+
+    /*
+     * Si Mario está bajando por la tubería,
+     * no procesamos el movimiento normal.
+     */
+
+    if (
+        bajandoTubo
+    ) {
+
+        mario.style.left =
+            marioX + 'px';
+
+        mario.style.bottom =
+            marioY + 'px';
+
+        requestAnimationFrame(actualizar);
+
+        return;
+    }
+
+
+    // ========================================================
+    // MARIO VIVO
+    // ========================================================
 
     if (!marioMuerto) {
 
@@ -661,6 +984,10 @@ function actualizar() {
 
         let moviendose = false;
 
+
+        // ----------------------------------------------------
+        // MOVIMIENTO HORIZONTAL
+        // ----------------------------------------------------
 
         if (!controlesBloqueados) {
 
@@ -671,7 +998,6 @@ function actualizar() {
                 direccion = -1;
 
                 moviendose = true;
-
             }
 
 
@@ -682,33 +1008,48 @@ function actualizar() {
                 direccion = 1;
 
                 moviendose = true;
-
             }
-
         }
 
 
-        if (nuevoX < limiteIzquierdoAbsoluto) {
+        // ----------------------------------------------------
+        // LÍMITE IZQUIERDO
+        // ----------------------------------------------------
+
+        if (
+            nuevoX <
+            limiteIzquierdoAbsoluto
+        ) {
 
             nuevoX =
                 limiteIzquierdoAbsoluto;
-
         }
 
 
+        // ----------------------------------------------------
+        // SALTO
+        // ----------------------------------------------------
+
         if (
+
             teclas.w &&
+
             enElSuelo &&
+
             !controlesBloqueados
+
         ) {
 
             velocidadY =
                 fuerzaSalto;
 
             enElSuelo = false;
-
         }
 
+
+        // ----------------------------------------------------
+        // MOVIMIENTO VERTICAL
+        // ----------------------------------------------------
 
         let nuevoY =
             marioY + velocidadY;
@@ -717,27 +1058,42 @@ function actualizar() {
         velocidadY -= gravedad;
 
 
+        // ----------------------------------------------------
+        // COLISIONES
+        // ----------------------------------------------------
+
         const colision =
+
             resolverColisiones(
+
                 nuevoX,
+
                 nuevoY
             );
 
 
-        marioX = colision.x;
+        marioX =
+            colision.x;
 
-        marioY = colision.y;
+
+        marioY =
+            colision.y;
 
 
-        if (colision.enPlataforma) {
+        if (
+            colision.enPlataforma
+        ) {
 
             enElSuelo = true;
 
             velocidadY = 0;
 
-        } else if (marioY <= nivelSuelo) {
+        } else if (
+            marioY <= nivelSuelo
+        ) {
 
-            marioY = nivelSuelo;
+            marioY =
+                nivelSuelo;
 
             velocidadY = 0;
 
@@ -746,14 +1102,23 @@ function actualizar() {
         } else {
 
             enElSuelo = false;
-
         }
 
+
+        // ----------------------------------------------------
+        // COMPROBAR ELEMENTOS
+        // ----------------------------------------------------
 
         comprobarContactoPlanta1();
 
         comprobarAtaquePlanta2();
 
+        comprobarEntradaTubo();
+
+
+        // ----------------------------------------------------
+        // ANIMACIÓN DE MARIO
+        // ----------------------------------------------------
 
         mario.className = '';
 
@@ -781,13 +1146,21 @@ function actualizar() {
             mario.classList.add(
                 'mario-idle'
             );
-
         }
 
 
-    } else if (
+    }
+
+    // ========================================================
+    // MARIO MUERTO / FANTASMA
+    // ========================================================
+
+    else if (
+
         marioMuerto &&
+
         marioEsFantasma
+
     ) {
 
         marioY += velocidadY;
@@ -795,31 +1168,41 @@ function actualizar() {
         velocidadY -= gravedad;
 
 
-        if (marioY < nivelSuelo) {
+        if (
+            marioY < nivelSuelo
+        ) {
 
-            marioY = nivelSuelo;
+            marioY =
+                nivelSuelo;
 
             velocidadY = 0;
-
         }
-
     }
 
 
+    // ========================================================
+    // POSICIÓN VISUAL DE MARIO
+    // ========================================================
+
     mario.style.transform =
+
         `scaleX(${direccion * 1.2}) scaleY(1.2)`;
 
 
     mario.style.left =
         marioX + 'px';
 
+
     mario.style.bottom =
         marioY + 'px';
 
 
     requestAnimationFrame(actualizar);
-
 }
 
+
+// ============================================================
+// INICIAR JUEGO
+// ============================================================
 
 actualizar();

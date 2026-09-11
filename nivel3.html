@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Nivel 3 - IA en FIFA</title>
+
+    <!-- CSS ORIGINAL: contiene las skins de Mario -->
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+
+        /* =====================================================
+           PANTALLA
+        ===================================================== */
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #000;
+        }
+
+        body {
+            display: block;
+        }
+
+        #juego-nivel3 {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+            background: #000;
+        }
+
+
+        /* =====================================================
+           ESCENARIO
+        ===================================================== */
+
+        #escenario-fifa {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 2200px;
+            height: 100vh;
+            min-height: 500px;
+            background: #000;
+            transform: translateX(0);
+            z-index: 1;
+        }
+
+        #fondo-fifa {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 2200px;
+            height: 100%;
+            background: #000;
+            z-index: 0;
+        }
+
+
+        /* =====================================================
+           TUBERÍA DE ENTRADA
+        ===================================================== */
+
+        #tubo-entrada-fifa {
+            position: absolute;
+            left: 100px;
+            bottom: 50px;
+            width: 90px;
+            height: 180px;
+
+            background-image:
+                url('https://cdn.pixabay.com/photo/2013/07/12/13/52/super-mario-brothers-147465_1280.png');
+
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+
+            z-index: 6;
+        }
+
+
+        /* =====================================================
+           TUBERÍA DE SALIDA
+        ===================================================== */
+
+        #tubo-salida-fifa {
+            position: absolute;
+            left: 2020px;
+            bottom: 50px;
+            width: 80px;
+            height: 110px;
+
+            background-image:
+                url('https://cdn.pixabay.com/photo/2013/07/12/13/52/super-mario-brothers-147465_1280.png');
+
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+
+            z-index: 6;
+        }
+
+
+        /* =====================================================
+           MARIO
+        ===================================================== */
+
+        #mario {
+            width: 48px;
+            height: 60px;
+            position: absolute;
+            z-index: 5;
+        }
+
+
+        /* =====================================================
+           TÍTULO
+        ===================================================== */
+
+        #titulo-fifa {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 900px;
+
+            color: white;
+            text-align: center;
+
+            font-family: 'Geistl Pixel', monospace;
+            font-size: 42px;
+            font-weight: bold;
+
+            text-shadow:
+                3px 3px 0 #000,
+                -2px -2px 0 #000,
+                2px -2px 0 #000,
+                -2px 2px 0 #000;
+
+            z-index: 20;
+        }
+
+
+        /* =====================================================
+           SUBTÍTULO
+        ===================================================== */
+
+        #subtitulo-fifa {
+            position: absolute;
+            top: 110px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 900px;
+
+            color: white;
+            text-align: center;
+
+            font-family: 'Geistl Pixel', monospace;
+            font-size: 22px;
+
+            text-shadow: 2px 2px 3px #000;
+
+            z-index: 20;
+        }
+
+
+        /* =====================================================
+           POW
+        ===================================================== */
+
+        .pow {
+            position: absolute;
+
+            width: 80px;
+            height: 80px;
+
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+
+            z-index: 8;
+
+            transition:
+                transform 0.08s ease,
+                bottom 0.08s ease;
+        }
+
+
+        #pow-rojo {
+            left: 750px;
+            bottom: 230px;
+
+            background-image:
+                url('img/powr.png');
+        }
+
+
+        #pow-azul {
+            left: 1450px;
+            bottom: 230px;
+
+            background-image:
+                url('img/powb.png');
+        }
+
+
+        .pow-golpeado {
+            transform:
+                translateY(12px)
+                scale(0.95);
+        }
+
+
+        /* =====================================================
+           CAJAS DE INFORMACIÓN
+        ===================================================== */
+
+        .info-fifa {
+            position: absolute;
+
+            color: white;
+            text-align: center;
+
+            font-family: 'Geistl Pixel', monospace;
+
+            background: rgba(0, 0, 0, 0.92);
+
+            border: 3px solid white;
+            border-radius: 10px;
+
+            padding: 20px;
+
+            box-sizing: border-box;
+
+            z-index: 30;
+
+            text-shadow:
+                2px 2px 3px #000;
+        }
+
+
+        .info-oculta {
+            display: none !important;
+        }
+
+
+        /* =====================================================
+           INFO POW ROJO
+        ===================================================== */
+
+        #info-roja {
+            left: 550px;
+            top: 180px;
+            width: 600px;
+
+            border-color: #fff;
+        }
+
+
+        #info-roja p {
+            margin: 0 0 18px 0;
+
+            font-size: 25px;
+            line-height: 1.35;
+        }
+
+
+        #imagen-ea {
+            display: block;
+
+            width: 600px;
+            max-width: 100%;
+            height: auto;
+
+            margin: 0 auto;
+        }
+
+
+        /* =====================================================
+           INFO POW AZUL
+        ===================================================== */
+
+        #info-azul {
+            left: 1180px;
+            top: 180px;
+            width: 600px;
+
+            border-color: #fff;
+        }
+
+
+        #info-azul p {
+            margin: 0 0 18px 0;
+
+            font-size: 25px;
+            line-height: 1.35;
+        }
+
+
+        #video-fifa {
+            display: block;
+
+            width: 600px;
+            max-width: 100%;
+            height: auto;
+
+            margin: 0 auto;
+
+            background: #000;
+        }
+
+
+        /* =====================================================
+           SUELO
+        ===================================================== */
+
+        #suelo-fifa {
+            position: absolute;
+
+            left: 0;
+            bottom: 0;
+
+            width: 2200px;
+            height: 50px;
+
+            background-image:
+                url('https://i.pinimg.com/736x/2f/87/23/2f87236e7dfb88c1a8561200cdddfe6e.jpg');
+
+            background-size: contain;
+            background-repeat: repeat-x;
+
+            z-index: 10;
+        }
+
+
+        /* =====================================================
+           ANIMACIÓN DE SALIDA DE TUBERÍA
+        ===================================================== */
+
+        #mario.saliendo-tubo {
+            transition:
+                bottom 0.8s ease-out !important;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <div id="juego-nivel3">
+
+        <div id="escenario-fifa">
+
+            <!-- FONDO -->
+
+            <div id="fondo-fifa"></div>
+
+
+            <!-- =================================================
+                 TUBERÍA DE LA QUE SALE MARIO
+            ================================================== -->
+
+            <div
+                id="tubo-entrada-fifa"
+                class="cañeria-entrada">
+            </div>
+
+
+            <!-- =================================================
+                 TUBERÍA DE SALIDA HACIA EL NIVEL 4
+            ================================================== -->
+
+            <div
+                id="tubo-salida-fifa"
+                class="cañeria-entrada">
+            </div>
+
+
+            <!-- =================================================
+                 TÍTULO
+            ================================================== -->
+
+            <div id="titulo-fifa">
+                INTELIGENCIA ARTIFICIAL: FIFA
+            </div>
+
+
+            <div id="subtitulo-fifa">
+                Usa frames captados de partidos reales
+            </div>
+
+
+            <!-- =================================================
+                 POW ROJO
+            ================================================== -->
+
+            <div
+                id="pow-rojo"
+                class="pow">
+            </div>
+
+
+            <!-- =================================================
+                 INFORMACIÓN POW ROJO
+            ================================================== -->
+
+            <div
+                id="info-roja"
+                class="info-fifa info-oculta">
+
+                <p>
+                    El modelo de EA procesa<br>
+                    más de 8.7 millones<br>
+                    de fotogramas
+                </p>
+
+                <img
+                    id="imagen-ea"
+                    src="https://d1rzxhvrtciqq1.cloudfront.net/uploads/images/listingimage/854117/image/big-69445905ad86c2f7b6e2fef56a4e68e4.jpg"
+                    alt="Imagen relacionada con EA">
+
+            </div>
+
+
+            <!-- =================================================
+                 POW AZUL
+            ================================================== -->
+
+            <div
+                id="pow-azul"
+                class="pow">
+            </div>
+
+
+            <!-- =================================================
+                 INFORMACIÓN POW AZUL
+            ================================================== -->
+
+            <div
+                id="info-azul"
+                class="info-fifa info-oculta">
+
+                <p>
+                    La red neuronal calcula y genera<br>
+                    en tiempo real<br>
+                    cómo se comporta cada articulación
+                </p>
+
+                <video
+                    id="video-fifa"
+                    controls
+                    preload="metadata">
+
+                    <source
+                        src="img/fifa.mp4"
+                        type="video/mp4">
+
+                    Tu navegador no puede reproducir este video.
+
+                </video>
+
+            </div>
+
+
+            <!-- =================================================
+                 MARIO
+            ================================================== -->
+
+            <div
+                id="mario"
+                class="mario-idle">
+            </div>
+
+
+            <!-- =================================================
+                 SUELO
+            ================================================== -->
+
+            <div id="suelo-fifa"></div>
+
+        </div>
+
+    </div>
+
+
+    <script src="script3.js"></script>
+
+</body>
+
+</html>

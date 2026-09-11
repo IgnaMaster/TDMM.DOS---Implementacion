@@ -4,9 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Mario ML - Nivel 2</title>
+
     <link rel="stylesheet" href="style.css">
 
     <style>
+
+        /* ============================================================
+           NIVEL 2
+           ============================================================ */
+
         #juego-nivel2 {
             background-color: #000;
             background-image: none;
@@ -23,38 +29,69 @@
             will-change: transform;
         }
 
-        /* Banner de texto superior dinámico */
+        /* ============================================================
+           BANNER DE TEXTO
+           ============================================================ */
+
         #texto-nivel2 {
             position: fixed;
             top: 80px;
             left: 50%;
             transform: translateX(-50%);
+
             color: #ffffff;
             font-size: 28px;
             text-transform: uppercase;
             letter-spacing: 2px;
+
             z-index: 100;
             text-align: center;
             text-shadow: 3px 3px 0px #000;
+
             pointer-events: none;
+
             width: 90%;
             max-width: 900px;
         }
 
-        /* Elementos del nivel */
+        /* ============================================================
+           TUBERÍAS
+           ============================================================ */
+
         .tuberia {
             position: absolute;
+
             background-image: url('https://cdn.pixabay.com/photo/2013/07/12/13/52/super-mario-brothers-147465_1280.png');
             background-size: 100% 100%;
             background-repeat: no-repeat;
+
             z-index: 10;
         }
 
-        /* Planta Piraña 1 */
+        /*
+         * Tubería de salida del nivel.
+         * Se mantienen las clases de la tubería del nivel anterior
+         * para utilizar la misma animación al bajar.
+         */
+
+        .cañeria-entrada {
+            cursor: pointer;
+        }
+
+        #tubo-salida {
+            z-index: 10;
+        }
+
+        /* ============================================================
+           PLANTA PIRAÑA 1
+           ============================================================ */
+
         #planta1 {
             position: absolute;
+
             width: 55px;
-height: 75px;
+            height: 75px;
+
             left: 520px;
 
             /* Empieza escondida dentro de la tubería */
@@ -67,55 +104,114 @@ height: 75px;
 
             z-index: 8;
 
-            /* Velocidad de salida/entrada */
             transition: bottom 0.6s ease-in-out;
         }
 
-        /* Planta Piraña 2 */
+        /* ============================================================
+           PLANTA PIRAÑA 2
+           ============================================================ */
+
         #planta2 {
             position: absolute;
+
             width: 55px;
-height: 75px;
-            left: 1220px;
+            height: 75px;
+
+            left: 1720px;
             bottom: 160px;
+
             background-image: url('img/planta.png');
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
+
             z-index: 8;
         }
 
-        /* Espina / Proyectil */
+        /* ============================================================
+           ESPINA / PROYECTIL
+           ============================================================ */
+
         #espina {
             position: absolute;
+
             width: 20px;
             height: 20px;
-            background: radial-gradient(circle, #ff3300 30%, #990000 80%);
-            clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+
+            background: radial-gradient(
+                circle,
+                #ff3300 30%,
+                #990000 80%
+            );
+
+            clip-path: polygon(
+                50% 0%,
+                100% 100%,
+                0% 100%
+            );
+
             z-index: 12;
             display: none;
+
             box-shadow: 0 0 6px #ff0000;
         }
 
-        /* Hongo Revividor */
+        /* ============================================================
+           HONGO REVIVIDOR
+           ============================================================ */
+
         #hongo {
             position: absolute;
+
             width: 40px;
             height: 40px;
+
             background-image: url('img/vida.png');
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
+
             z-index: 15;
             display: none;
         }
 
-        /* Skin Fantasma */
+        /* ============================================================
+           SKIN FANTASMA
+           ============================================================ */
+
         #mario.mario-fantasma {
             background-image: url('https://i2.wp.com/webstockreview.net/images/mario-clipart-pixel-mario-13.png') !important;
-            filter: invert(1) drop-shadow(0px 0px 8px rgba(255, 255, 255, 0.8));
+
+            filter:
+                invert(1)
+                drop-shadow(
+                    0px 0px 8px
+                    rgba(255, 255, 255, 0.8)
+                );
+
             opacity: 0.85;
         }
+
+        /* ============================================================
+           ANIMACIÓN DE BAJADA POR LA TUBERÍA
+           ============================================================ */
+
+        #mario.bajando-tubo {
+            transition:
+                bottom 0.8s ease-in,
+                transform 0.8s ease-in;
+
+            transform:
+                scaleX(1.2)
+                scaleY(0.4);
+        }
+
+        #mario.mario-agachado {
+            transform:
+                scaleX(1.2)
+                scaleY(0.7);
+        }
+
     </style>
 </head>
 
@@ -123,54 +219,140 @@ height: 75px;
 
     <div id="juego" id="juego-nivel2">
 
+        <!-- ============================================================
+             TEXTO SUPERIOR
+             ============================================================ -->
+
         <div id="texto-nivel2">
             MARIO BROS NO USA MACHINE LEARNING
         </div>
+
+
+        <!-- ============================================================
+             ESCENARIO
+             ============================================================ -->
 
         <div id="escenario">
 
             <div id="mundo">
 
-                <!-- Tubería 0: Salida alta inicial -->
-                <div class="tuberia obstaculo"
-                    style="left: 150px; bottom: 50px; width: 90px; height: 180px;">
+                <!-- ====================================================
+                     TUBERÍA 0
+                     Tubería inicial alta
+                     ==================================================== -->
+
+                <div
+                    class="tuberia obstaculo"
+                    style="
+                        left: 150px;
+                        bottom: 50px;
+                        width: 90px;
+                        height: 180px;
+                    ">
                 </div>
 
-                <!-- Tubería 1 con Planta 1 -->
-                <div class="tuberia obstaculo"
-                    style="left: 500px; bottom: 50px; width: 80px; height: 110px;">
+
+                <!-- ====================================================
+                     TUBERÍA 1 + PLANTA 1
+                     ==================================================== -->
+
+                <div
+                    class="tuberia obstaculo"
+                    style="
+                        left: 500px;
+                        bottom: 50px;
+                        width: 80px;
+                        height: 110px;
+                    ">
                 </div>
 
                 <div id="planta1"></div>
 
-                <!-- Tubería 2 con Planta 2 -->
-                <div class="tuberia obstaculo"
-                    style="left: 1700px; bottom: 50px; width: 80px; height: 110px;">
+
+                <!-- ====================================================
+                     TUBERÍA 2 + PLANTA 2
+                     ==================================================== -->
+
+                <div
+                    class="tuberia obstaculo"
+                    style="
+                        left: 1700px;
+                        bottom: 50px;
+                        width: 80px;
+                        height: 110px;
+                    ">
                 </div>
 
-                <div id="planta2"
-                    style="left: 1720px; bottom: 160px;">
+                <div
+                    id="planta2"
+                    style="
+                        left: 1720px;
+                        bottom: 160px;
+                    ">
                 </div>
 
-                <!-- Proyectil & Hongo -->
+
+                <!-- ====================================================
+                     PROYECTIL
+                     ==================================================== -->
+
                 <div id="espina"></div>
+
+
+                <!-- ====================================================
+                     HONGO
+                     ==================================================== -->
+
                 <div id="hongo"></div>
 
-                <!-- Mario -->
-                <div id="mario"
+
+                <!-- ====================================================
+                     TUBERÍA DE SALIDA
+                     ====================================================
+
+                     Mario tiene que pararse arriba de esta tubería
+                     y presionar S para bajar.
+
+                     Al terminar la animación pasa a nivel3.html.
+                     ==================================================== -->
+
+                <div
+                    id="tubo-salida"
+                    class="tuberia cañeria-entrada obstaculo"
+                    style="
+                        left: 2850px;
+                        bottom: 50px;
+                        width: 80px;
+                        height: 110px;
+                    ">
+                </div>
+
+
+                <!-- ====================================================
+                     MARIO
+                     ==================================================== -->
+
+                <div
+                    id="mario"
                     class="mario-idle"
-                    style="left: 171px; bottom: 230px;">
+                    style="
+                        left: 171px;
+                        bottom: 230px;
+                    ">
                 </div>
 
             </div>
 
+            <!-- Piso -->
             <div id="piso"></div>
 
         </div>
 
     </div>
 
+
     <script src="script2.js"></script>
 
 </body>
+
 </html>
