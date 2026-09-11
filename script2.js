@@ -43,35 +43,41 @@ let hongoX = 0;
 let hongoY = 0;
 
 // SISTEMA DE TEXTOS CON TIMERS Y BLOQUEO DE LECTURA
-let textoBloqueadoHasta = 0; // Timestamp hasta el cual no se puede cambiar el texto
-let indicePasoTexto = 0; // Control de progreso del mensaje
+let textoBloqueadoHasta = 0; 
+let indicePasoTexto = 0; 
 
 function mostrarTextoConTimer(mensaje, duracionMs) {
     textoNivel.textContent = mensaje;
     textoBloqueadoHasta = Date.now() + duracionMs;
 }
 
+
 window.addEventListener('keydown', (e) => {
     const tecla = e.key.toLowerCase();
     if (teclas.hasOwnProperty(tecla)) teclas[tecla] = true;
 });
+
 
 window.addEventListener('keyup', (e) => {
     const tecla = e.key.toLowerCase();
     if (teclas.hasOwnProperty(tecla)) teclas[tecla] = false;
 });
 
+
 // Ciclo de Planta 1 (Sube y baja)
 setInterval(() => {
     if (marioMuerto) return;
+
     planta1Arriba = !planta1Arriba;
+
     if (planta1) {
         planta1.style.bottom = planta1Arriba ? '160px' : '90px';
     }
+
 }, 2000);
 
+
 function actualizarTextosYCamara() {
-    // 1. Scroll No-backtracking
     const anchoPantalla = window.innerWidth;
     const objetivoCamara = marioX - (anchoPantalla / 3);
 
@@ -82,22 +88,22 @@ function actualizarTextosYCamara() {
 
     escenario.style.transform = `translateX(${-camaraX}px)`;
 
-    // 2. Control de Textos con Timer
     const ahora = Date.now();
 
-    // Si hay un texto actualmente bloqueado por timer, no lo interrumpimos
     if (ahora < textoBloqueadoHasta) return;
 
     if (marioEsFantasma) {
         textoNivel.textContent = "PERO TE DAMOS OTRA OPORTUNIDAD";
     } else {
-        // Secuencia ajustada en tiempos y distancias para que quepan todas las frases
+
         if (indicePasoTexto === 0 && marioX >= 171) {
             mostrarTextoConTimer("MARIO BROS NO USA MACHINE LEARNING", 2000);
             indicePasoTexto = 1;
+
         } else if (indicePasoTexto === 1 && marioX >= 550) {
             mostrarTextoConTimer("PERO SI LO TUVIERA...", 1800);
             indicePasoTexto = 2;
+
         } else if (indicePasoTexto === 2 && marioX >= 900) {
             mostrarTextoConTimer("PODRÍA APRENDER TU COMPORTAMIENTO", 1500);
             indicePasoTexto = 3;
@@ -105,34 +111,56 @@ function actualizarTextosYCamara() {
     }
 }
 
+
 function resolverColisiones(siguienteX, siguienteY) {
     const obstaculos = document.querySelectorAll('.obstaculo');
+
     const marioWidth = 48;
     const marioHeight = 60;
 
-    let resultado = { x: siguienteX, y: siguienteY, enPlataforma: false };
+    let resultado = {
+        x: siguienteX,
+        y: siguienteY,
+        enPlataforma: false
+    };
 
     obstaculos.forEach(elem => {
+
         const bLeft = parseInt(elem.style.left) || elem.offsetLeft;
         const bBottom = parseInt(elem.style.bottom) || 50;
         const bWidth = elem.offsetWidth;
         const bHeight = elem.offsetHeight;
 
-        const solapeX = (resultado.x + marioWidth > bLeft) && (resultado.x < bLeft + bWidth);
-        const solapeY = (resultado.y + marioHeight > bBottom) && (resultado.y < bBottom + bHeight);
+        const solapeX =
+            (resultado.x + marioWidth > bLeft) &&
+            (resultado.x < bLeft + bWidth);
+
+        const solapeY =
+            (resultado.y + marioHeight > bBottom) &&
+            (resultado.y < bBottom + bHeight);
 
         if (solapeX && solapeY) {
-            const previoSolapeX = (marioX + marioWidth > bLeft) && (marioX < bLeft + bWidth);
+
+            const previoSolapeX =
+                (marioX + marioWidth > bLeft) &&
+                (marioX < bLeft + bWidth);
 
             if (previoSolapeX) {
-                if (velocidadY <= 0 && marioY >= bBottom + bHeight - 20) {
+
+                if (
+                    velocidadY <= 0 &&
+                    marioY >= bBottom + bHeight - 20
+                ) {
                     resultado.y = bBottom + bHeight;
                     velocidadY = 0;
                     resultado.enPlataforma = true;
                 }
+
             } else {
+
                 if (marioX + marioWidth <= bLeft) {
                     resultado.x = bLeft - marioWidth;
+
                 } else if (marioX >= bLeft + bWidth) {
                     resultado.x = bLeft + bWidth;
                 }
@@ -143,7 +171,9 @@ function resolverColisiones(siguienteX, siguienteY) {
     return resultado;
 }
 
+
 function comprobarContactoPlanta1() {
+
     if (marioMuerto || !planta1Arriba) return;
 
     const pLeft = 520;
@@ -154,37 +184,61 @@ function comprobarContactoPlanta1() {
     const marioWidth = 48;
     const marioHeight = 60;
 
-    const solapeX = (marioX + marioWidth > pLeft) && (marioX < pLeft + pWidth);
-    const solapeY = (marioY + marioHeight > pBottom) && (marioY < pBottom + pHeight);
+    const solapeX =
+        (marioX + marioWidth > pLeft) &&
+        (marioX < pLeft + pWidth);
+
+    const solapeY =
+        (marioY + marioHeight > pBottom) &&
+        (marioY < pBottom + pHeight);
 
     if (solapeX && solapeY) {
+
         marioX = limiteIzquierdoAbsoluto + 20;
         marioY = nivelSuelo;
         velocidadY = 0;
     }
 }
 
+
 function comprobarAtaquePlanta2() {
+
     if (planta2DisparoLanzado || marioMuerto) return;
 
-    const tubo2X = 1700;
-    const distancia = tubo2X - marioX;
+    const p2Left =
+        planta2
+            ? (parseInt(planta2.style.left) || planta2.offsetLeft)
+            : 1720;
+
+    const distancia = p2Left - marioX;
     const umbral18 = window.innerWidth / 8;
 
     if (distancia > 0 && distancia <= umbral18) {
+
         planta2DisparoLanzado = true;
         controlesBloqueados = true;
 
-        // Mostramos "Y CAMBIAR EL SUYO." con timer garantizado de 3 segundos
         mostrarTextoConTimer("Y CAMBIAR EL SUYO.", 3000);
 
-        lanzarEspina(marioX + 24, marioY + 30);
+        const espinaOrigenX = p2Left + 20;
+        const espinaOrigenY =
+            (parseInt(planta2.style.bottom) || 160) + 50;
+
+        lanzarEspina(
+            marioX + 24,
+            marioY + 30,
+            espinaOrigenX,
+            espinaOrigenY
+        );
     }
 }
 
-function lanzarEspina(targetX, targetY) {
-    espinaX = 1740;
-    espinaY = 210;
+
+function lanzarEspina(targetX, targetY, origenX, origenY) {
+
+    espinaX = origenX;
+    espinaY = origenY;
+
     espina.style.display = 'block';
 
     const dx = targetX - espinaX;
@@ -192,13 +246,16 @@ function lanzarEspina(targetX, targetY) {
     const dist = Math.hypot(dx, dy);
 
     const velocidadEspina = 18;
+
     espinaVX = (dx / dist) * velocidadEspina;
     espinaVY = (dy / dist) * velocidadEspina;
 
     espinaActiva = true;
 }
 
+
 function actualizarEspina() {
+
     if (!espinaActiva) return;
 
     espinaX += espinaVX;
@@ -210,14 +267,23 @@ function actualizarEspina() {
     const centroMarioX = marioX + 24;
     const centroMarioY = marioY + 30;
 
-    if (Math.hypot(espinaX - centroMarioX, espinaY - centroMarioY) < 35) {
+    if (
+        Math.hypot(
+            espinaX - centroMarioX,
+            espinaY - centroMarioY
+        ) < 35
+    ) {
+
         espinaActiva = false;
         espina.style.display = 'none';
+
         ejecutarMuerteFantasma();
     }
 }
 
+
 function ejecutarMuerteFantasma() {
+
     marioMuerto = true;
     marioEsFantasma = true;
     controlesBloqueados = false;
@@ -225,67 +291,123 @@ function ejecutarMuerteFantasma() {
     velocidadY = 14;
 
     setTimeout(() => {
+
         mario.classList.add('mario-fantasma');
-        
-        // Al transformarse pasa al mensaje final
-        mostrarTextoConTimer("PERO TE DAMOS OTRA OPORTUNIDAD", 4000);
+
+        mostrarTextoConTimer(
+            "PERO TE DAMOS OTRA OPORTUNIDAD",
+            4000
+        );
+
         aparecerHongo();
+
     }, 300);
 }
 
+
+// ============================================================
+// HONGO REVIVIDOR
+// ============================================================
+
 function aparecerHongo() {
-    const centroPantalla = camaraX + (window.innerWidth / 2);
-    hongoX = centroPantalla;
-    hongoY = 280;
+
+    // El hongo aparece exactamente sobre Mario.
+    hongoX = marioX;
+
+    // Aparece 180px por encima de Mario.
+    hongoY = marioY + 180;
 
     hongo.style.left = hongoX + 'px';
     hongo.style.bottom = hongoY + 'px';
+
     hongo.style.display = 'block';
+
     hongoActivo = true;
 }
 
+
 function actualizarHongo() {
+
     if (!hongoActivo) return;
 
+    // El hongo cae verticalmente.
+    // No cambia su posición X.
     if (hongoY > nivelSuelo) {
-        hongoY -= 3;
-    }
-
-    if (hongoX > marioX) {
-        hongoX -= 2.5;
-    } else if (hongoX < marioX) {
-        hongoX += 2.5;
+        hongoY -= 1;
     }
 
     hongo.style.left = hongoX + 'px';
     hongo.style.bottom = hongoY + 'px';
 
-    const dist = Math.hypot(hongoX - marioX, hongoY - marioY);
-    if (dist < 40) {
+
+    // Tamaño aproximado de los elementos.
+    const hongoWidth = 40;
+    const hongoHeight = 40;
+
+    const marioWidth = 48;
+    const marioHeight = 60;
+
+
+    // Comprobamos si el hongo toca a Mario.
+    const solapeX =
+        hongoX + hongoWidth > marioX &&
+        hongoX < marioX + marioWidth;
+
+    const solapeY =
+        hongoY < marioY + marioHeight &&
+        hongoY + hongoHeight > marioY;
+
+
+    if (solapeX && solapeY) {
+
+        // El hongo desaparece.
         hongoActivo = false;
         hongo.style.display = 'none';
+
+        // Mario revive.
         marioEsFantasma = false;
         marioMuerto = false;
-        mario.classList.remove('mario-fantasma');
+        controlesBloqueados = false;
+
+        // Mario cae/queda en el suelo.
+        marioY = nivelSuelo;
+        velocidadY = 0;
+        enElSuelo = true;
+
+        // Recupera la skin idle.
+        mario.className = 'mario-idle';
     }
 }
 
+
 function actualizar() {
+
     actualizarTextosYCamara();
 
-    if (espinaActiva) actualizarEspina();
-    if (hongoActivo) actualizarHongo();
+
+    if (espinaActiva) {
+        actualizarEspina();
+    }
+
+    if (hongoActivo) {
+        actualizarHongo();
+    }
+
 
     if (!marioMuerto) {
+
         let nuevoX = marioX;
         let moviendose = false;
 
+
         if (!controlesBloqueados) {
+
             if (teclas.a) {
                 nuevoX -= velocidadX;
                 direccion = -1;
                 moviendose = true;
             }
+
             if (teclas.d) {
                 nuevoX += velocidadX;
                 direccion = 1;
@@ -293,57 +415,104 @@ function actualizar() {
             }
         }
 
+
         if (nuevoX < limiteIzquierdoAbsoluto) {
             nuevoX = limiteIzquierdoAbsoluto;
         }
 
-        if (teclas.w && enElSuelo && !controlesBloqueados) {
+
+        if (
+            teclas.w &&
+            enElSuelo &&
+            !controlesBloqueados
+        ) {
             velocidadY = fuerzaSalto;
             enElSuelo = false;
         }
 
+
         let nuevoY = marioY + velocidadY;
+
         velocidadY -= gravedad;
 
-        const colision = resolverColisiones(nuevoX, nuevoY);
+
+        const colision =
+            resolverColisiones(nuevoX, nuevoY);
+
         marioX = colision.x;
         marioY = colision.y;
 
+
         if (colision.enPlataforma) {
+
             enElSuelo = true;
             velocidadY = 0;
+
         } else if (marioY <= nivelSuelo) {
+
             marioY = nivelSuelo;
             velocidadY = 0;
             enElSuelo = true;
+
         } else {
+
             enElSuelo = false;
         }
+
 
         comprobarContactoPlanta1();
         comprobarAtaquePlanta2();
 
+
         mario.className = '';
+
+
         if (marioEsFantasma) {
+
             mario.classList.add('mario-fantasma');
+
         } else if (!enElSuelo) {
+
             mario.classList.add('mario-saltando');
+
         } else if (moviendose) {
+
             mario.classList.add('mario-corriendo');
+
         } else {
+
             mario.classList.add('mario-idle');
         }
-    } else if (marioMuerto && marioEsFantasma && !hongoActivo) {
+
+
+    } else if (marioMuerto && marioEsFantasma) {
+
+        // Mario sigue cayendo mientras espera al hongo.
+        // Esta es la única modificación necesaria respecto
+        // a la lógica anterior: antes esta caída se detenía
+        // mientras el hongo estaba activo.
+
         marioY += velocidadY;
         velocidadY -= gravedad;
-        if (marioY < nivelSuelo) marioY = nivelSuelo;
+
+        if (marioY < nivelSuelo) {
+            marioY = nivelSuelo;
+            velocidadY = 0;
+        }
     }
 
-    mario.style.transform = `scaleX(${direccion * 1.2}) scaleY(1.2)`;
+
+    // Mantiene la orientación exacta según la dirección
+    // sin romper la física.
+    mario.style.transform =
+        `scaleX(${direccion * 1.2}) scaleY(1.2)`;
+
     mario.style.left = marioX + 'px';
     mario.style.bottom = marioY + 'px';
 
+
     requestAnimationFrame(actualizar);
 }
+
 
 actualizar();
