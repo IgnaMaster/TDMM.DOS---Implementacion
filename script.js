@@ -118,9 +118,11 @@ function comprobarEntradaTubo() {
         marioX = tuboLeft + (tuboWidth / 2) - 24;
         mario.style.left = marioX + 'px';
 
-        setTimeout(() => {
-            console.log("Mario bajó por la tubería. Listo para cargar las siguientes imágenes.");
-        }, 1000);
+        // En tu script.js actual:
+setTimeout(() => {
+    // Redirige al nuevo nivel
+    window.location.href = "nivel2.html"; 
+}, 800);
     }
 }
 
